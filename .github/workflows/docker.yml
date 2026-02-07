@@ -57,6 +57,6 @@ jobs:
             username: ubuntu
             key: ${{ secrets.EC2_SSH_KEY }}
             script: |
-              cd ~/gymsync
+              cd ~/ai
               docker compose pull
               docker compose up -d
