@@ -68,28 +68,26 @@ if not MOCK_MODE:
 
 def predict_animal(image_bytes: bytes) -> str:
     """Predict animal from image bytes."""
-    
+    # If we're in mock mode, clearly signal that the real model
+    # is not being used instead of returning a fixed label.
+    if MOCK_MODE or model is None:
+        raise HTTPException(
+            status_code=500,
+            detail="Model is not loaded on server (MOCK_MODE). Check TensorFlow installation and model file."
+        )
+
     # Real prediction with TensorFlow
-    if not MOCK_MODE and model is not None:
-        try:
-            img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
-            img = img.resize((224, 224))
-            img_array = np.array(img) / 255.0
-            img_array = np.expand_dims(img_array, axis=0)
-            
-            preds = model.predict(img_array, verbose=0)
-            class_id = int(np.argmax(preds[0]))
-            return labels.get(class_id, f"Unknown class ID: {class_id}")
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
-    
-    # Mock predictor for testing (no ML libs)
     try:
-        img = Image.open(io.BytesIO(image_bytes))
-        # Return a mock prediction based on image properties
-        return "dog"  # Default mock prediction
+        img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+        img = img.resize((224, 224))
+        img_array = np.array(img) / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+
+        preds = model.predict(img_array, verbose=0)
+        class_id = int(np.argmax(preds[0]))
+        return labels.get(class_id, f"Unknown class ID: {class_id}")
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Invalid image: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
 
 @app.get("/")
 async def root():
