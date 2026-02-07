@@ -105,6 +105,8 @@ async def predict(file: UploadFile = File(...)):
     """
     Predict animal from uploaded image.
     
+    NOTE: Images are processed in-memory and NOT saved to disk.
+    
     Returns:
         {
             "prediction": "animal_name",
@@ -114,7 +116,7 @@ async def predict(file: UploadFile = File(...)):
     if not file.filename:
         raise HTTPException(status_code=400, detail="No file provided")
     
-    # Read image bytes
+    # Read image bytes into memory only (not saved to disk)
     try:
         image_bytes = await file.read()
         if not image_bytes:
@@ -122,7 +124,7 @@ async def predict(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to read file: {str(e)}")
     
-    # Run prediction
+    # Run prediction from image bytes (in-memory, no file storage)
     prediction = predict_animal(image_bytes)
     
     return {

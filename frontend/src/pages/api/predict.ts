@@ -1,6 +1,8 @@
 // pages/api/predict.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { IncomingForm } from 'formidable';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export const config = {
   api: {
@@ -9,8 +11,16 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Use system temp directory instead of public folder
+  const tempDir = path.join(require('os').tmpdir(), 'animal-recognizer-uploads');
+  
+  // Ensure temp directory exists
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+  }
+
   const form = new IncomingForm({ 
-    uploadDir: './public/uploads', 
+    uploadDir: tempDir,
     keepExtensions: true,
     filter: (part) => {
       const isImage = part.mimetype?.includes('image') ?? false;
@@ -35,15 +45,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
     const imagePath = imageFile.filepath;
     
-    console.log('Image uploaded to:', imagePath);
-
-    // Get backend API URL from env or use default
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    
     try {
-      // Read the image file and send to FastAPI backend
-      const fs = await import('fs');
+      // Read image from temp location
       const imageBuffer = fs.readFileSync(imagePath);
+      
+      // Delete image from temp directory immediately after reading
+      fs.unlinkSync(imagePath);
+      
+      // Get backend API URL from env or use default
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
       
       // Create FormData and send to backend
       const formData = new FormData();
