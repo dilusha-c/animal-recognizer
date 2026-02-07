@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { IncomingForm } from 'formidable';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
 
 export const config = {
   api: {
@@ -12,7 +13,7 @@ export const config = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Use system temp directory instead of public folder
-  const tempDir = path.join(require('os').tmpdir(), 'animal-recognizer-uploads');
+  const tempDir = path.join(os.tmpdir(), 'animal-recognizer-uploads');
   
   // Ensure temp directory exists
   if (!fs.existsSync(tempDir)) {
