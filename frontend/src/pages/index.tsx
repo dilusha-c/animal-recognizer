@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, Camera, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function Home() {
@@ -8,12 +8,11 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
+  const processImageFile = (file: File | null) => {
     setImage(file);
     setResult(null);
     setError(null);
-    
+
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -24,6 +23,32 @@ export default function Home() {
       setImagePreview(null);
     }
   };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    processImageFile(file);
+  };
+
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      const items = event.clipboardData?.items;
+      if (!items) return;
+
+      const imageItem = Array.from(items).find((item) => item.type.startsWith('image/'));
+      if (!imageItem) return;
+
+      const file = imageItem.getAsFile();
+      if (!file) return;
+
+      processImageFile(file);
+    };
+
+    window.addEventListener('paste', handlePaste);
+
+    return () => {
+      window.removeEventListener('paste', handlePaste);
+    };
+  }, []);
 
   const handleUpload = async () => {
     if (!image) return;
@@ -73,7 +98,7 @@ export default function Home() {
             Animal Recognizer
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-2">
-            Upload an image of an animal and let our AI identify what type of animal it is.
+            Upload or paste an image of an animal and let our AI identify what type of animal it is.
           </p>
           
         </div>
@@ -86,7 +111,7 @@ export default function Home() {
               <div className="p-8 border-r border-gray-100">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
                   <Upload size={24} className="text-indigo-600" />
-                  Upload Image
+                  Upload or Paste Image
                 </h2>
                 
                 {/* File Upload Area */}
@@ -104,8 +129,9 @@ export default function Home() {
                         />
                       ) : (                        <>
                           <Upload size={48} className="mb-4" />
-                          <p className="text-lg font-medium">Click to upload image</p>
+                          <p className="text-lg font-medium">Click to upload or paste image</p>
                           <p className="text-sm text-gray-500 mt-2">PNG, JPG, GIF up to 10MB</p>
+                          <p className="text-xs text-gray-400 mt-1">Or paste an image with Ctrl+V</p>
                           
                         </>
                       )}
