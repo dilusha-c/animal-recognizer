@@ -30,7 +30,6 @@ jobs:
           push: false
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/animal-recognizer-api:latest
-            ${{ secrets.DOCKER_USERNAME }}/animal-recognizer-api:${{ github.sha }}
           outputs: type=docker,dest=/tmp/image.tar
 
       - name: Load Docker image
