@@ -54,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       fs.unlinkSync(imagePath);
       
       // Get backend API URL from env or use default
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const backendUrl = (process.env.NEXT_PUBLIC_API_URL || 'https://dmdchamika1-animal-recognizer-api.hf.space').replace(/\/$/, '');
       
       // Create FormData and send to backend
       const formData = new FormData();
