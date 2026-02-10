@@ -45,7 +45,6 @@ jobs:
       - name: Push Docker image to Docker Hub
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/animal-recognizer-api:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/animal-recognizer-api:${{ github.sha }}
 
   deploy:
       needs: build-and-push
