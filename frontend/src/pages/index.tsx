@@ -251,7 +251,7 @@ export default function Home() {
                 <Upload className="text-purple-600" size={24} />
               </div>
               <h3 className="font-semibold text-gray-800 mb-2">Easy to Use</h3>
-              <p className="text-gray-600 text-sm">Simple drag-and-drop interface for quick animal identification</p>
+              <p className="text-gray-600 text-sm">Drag, click, or paste an image for instant animal identification</p>
             </div>
           </div>
         </div>
