@@ -1,0 +1,37 @@
+Dataset Information
+
+Source:
+Kaggle Dataset  
+https://www.kaggle.com/your-dataset-link
+
+Description:
+The dataset consists of labeled animal images used for training a convolutional neural network (CNN) model for multi-class image classification.
+
+Number of Classes:
+64 animal species
+
+Data Type:
+RGB images
+
+Preprocessing:
+- Images resized to fixed dimensions (e.g., 224x224)
+- Pixel values normalized (0–1 range)
+- Data augmentation applied using ImageDataGenerator:
+  • Rotation
+  • Zoom
+  • Horizontal flip
+  • Shear transformation
+
+Dataset Split:
+- Training Set: ~80%
+- Validation Set: ~20%
+
+Model:
+MobileNetV2 (transfer learning) with custom classification head
+
+Notes:
+- Dataset not included in repository due to size limitations
+- Downloaded dynamically using kagglehub in training environment
+
+Reproducibility:
+To use this dataset, run the training notebook which automatically downloads and preprocesses the dataset.
